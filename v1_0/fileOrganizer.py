@@ -1,5 +1,5 @@
 # ================================
-# (C)2021-2022 Dmytro Holub
+# (C)2021-2023 Dmytro Holub
 # heap3d@gmail.com
 # --------------------------------
 # Python
@@ -7,7 +7,7 @@
 # Organize rendered images to the specific folders by template
 # https://datatofish.com/executable-pyinstaller/
 # pip install pyinstaller
-# pyinstaller --onefile pythonScriptName.py
+# pyinstaller --onefile pythonScriptName.py --windowed
 
 import datetime
 import os
