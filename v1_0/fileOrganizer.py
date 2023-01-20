@@ -18,21 +18,21 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 
-VERSION = '1.3'
-ID_FILE_EXT = 'ext'
-ID_NO_FILE_EXT = 'noext'
-ID_FRAME_NUM = 'frame'
-ID_NO_FRAME_NUM = 'noframe'
-ID_HEADER = 'header'
-ID_TAIL = 'tail'
-ID_BEAUTY = 'Beauty'
-ID_REDIRECT = 'redirect'
-ID_SUBDIR = 'subdir'
-ID_RAW_ALIAS = 'raw_alias'
+VERSION = "1.4"
+ID_FILE_EXT = "ext"
+ID_NO_FILE_EXT = "noext"
+ID_FRAME_NUM = "frame"
+ID_NO_FRAME_NUM = "noframe"
+ID_HEADER = "header"
+ID_TAIL = "tail"
+ID_BEAUTY = "Beauty"
+ID_REDIRECT = "redirect"
+ID_SUBDIR = "subdir"
+ID_RAW_ALIAS = "raw_alias"
 IDX_ALIAS = 0
 IDX_REDIRECT = 1
 
-OLD_COPY_DIR = 'Old'
+OLD_COPY_DIR = "Old"
 
 DIVIDER_CNT = 8
 string_preview_size = 128
@@ -43,10 +43,10 @@ class MainApplication(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
-        self.parent.title('Render Files Organizer {}'.format(VERSION))
+        self.parent.title("Render Files Organizer {}".format(VERSION))
         self.parent.minsize(790, 515)
         self.frm_main = ttk.Frame(self.parent, padding=10)
-        self.frm_main.grid(row=0, column=0, sticky='nsew')
+        self.frm_main.grid(row=0, column=0, sticky="nsew")
 
         # grid configure
         tk.Grid.rowconfigure(self.parent, index=0, weight=1)
@@ -55,6 +55,7 @@ class MainApplication(tk.Frame):
         tk.Grid.columnconfigure(self.frm_main, index=1, weight=1)
 
         self.source_dir = tk.StringVar()
+        self.target_dir = tk.StringVar()
         self.frame_length = tk.StringVar()
         self.header_length = tk.StringVar()
         self.use_frame_length = tk.IntVar()
@@ -79,97 +80,186 @@ class MainApplication(tk.Frame):
             self.scan_button_command_adv()
 
         def spin_frame_length_enter(event):
-            self.scan_command_message('Frame number processing...', 'Frame number processing complete.')
+            self.scan_command_message(
+                "Frame number processing...", "Frame number processing complete."
+            )
 
         def spin_header_length_enter(event):
-            self.scan_command_message('Header length processing...', 'Header length processing complete.')
+            self.scan_command_message(
+                "Header length processing...", "Header length processing complete."
+            )
 
         def listbox_del_adv(event):
-            self.scan_command_message('Alias processing...', 'Alias processing complete.')
+            self.scan_command_message(
+                "Alias processing...", "Alias processing complete."
+            )
 
         def rename_header_enter(event):
-            if self.check_rename_header.instate(['selected']):
-                self.scan_command_message('Header rename processing...', 'Header rename processing complete.')
+            if self.check_rename_header.instate(["selected"]):
+                self.scan_command_message(
+                    "Header rename processing...", "Header rename processing complete."
+                )
 
         # directory controls
         self.row_dir = 0
-        ttk.Label(self.frm_main, text='Directory:').grid(column=0, row=self.row_dir, sticky='e')
+        ttk.Label(self.frm_main, text="Source:").grid(
+            column=0, row=self.row_dir, sticky="e"
+        )
         self.edit_dir = ttk.Entry(self.frm_main, textvariable=self.source_dir)
-        self.edit_dir.grid(column=1, row=self.row_dir, sticky='new')
+        self.edit_dir.grid(column=1, row=self.row_dir, sticky="new")
         self.source_dir.set(get_start_dir())
-        self.edit_dir.bind('<Return>', source_dir_enter_adv)
+        self.edit_dir.bind("<Return>", source_dir_enter_adv)
 
         self.frm_dir_buttons = ttk.Frame(self.frm_main)
-        self.frm_dir_buttons.grid(column=1, row=self.row_dir + 1, pady=10, sticky='ew')
+        self.frm_dir_buttons.grid(column=1, row=self.row_dir + 1, pady=10, sticky="ew")
         tk.Grid.columnconfigure(self.frm_dir_buttons, index=0, weight=1)
         tk.Grid.columnconfigure(self.frm_dir_buttons, index=1, weight=1)
 
-        self.btn_browse = ttk.Button(self.frm_dir_buttons, text='Browse...', command=self.browse_button_command_adv)
-        self.btn_browse.grid(column=0, row=0, sticky='ew')
-        self.btn_scan = ttk.Button(self.frm_dir_buttons, text='Scan Files', command=self.scan_button_command_adv)
-        self.btn_scan.grid(column=1, row=0, sticky='ew')
+        self.btn_browse = ttk.Button(
+            self.frm_dir_buttons,
+            text="Browse...",
+            command=self.browse_button_command_adv,
+        )
+        self.btn_browse.grid(column=0, row=0, sticky="ew")
+        self.btn_scan = ttk.Button(
+            self.frm_dir_buttons,
+            text="Scan Files",
+            command=self.scan_button_command_adv,
+        )
+        self.btn_scan.grid(column=1, row=0, sticky="ew")
+
+        ttk.Label(self.frm_main, text="Target:").grid(
+            column=0, row=self.row_dir + 2, sticky="e"
+        )
+        self.edit_target_dir = ttk.Entry(self.frm_main, textvariable=self.target_dir)
+        self.edit_target_dir.grid(column=1, row=self.row_dir + 2, sticky="news")
+        self.target_dir.set(get_start_dir())
+
+        self.frm_target_dir_buttons = ttk.Frame(self.frm_main)
+        self.frm_target_dir_buttons.grid(
+            column=1, row=self.row_dir + 3, pady=10, sticky="ew"
+        )
+        tk.Grid.columnconfigure(self.frm_target_dir_buttons, index=0, weight=1)
+        tk.Grid.columnconfigure(self.frm_target_dir_buttons, index=1, weight=1)
+
+        self.btn_target_browse = ttk.Button(
+            self.frm_target_dir_buttons,
+            text="Browse...",
+            command=self.target_browse_button_command_adv,
+        )
+        self.btn_target_browse.grid(column=0, row=1, sticky="ew")
+        self.btn_copy_source = ttk.Button(
+            self.frm_target_dir_buttons,
+            text="Copy Source",
+            command=self.copy_source_button_command_adv,
+        )
+        self.btn_copy_source.grid(column=1, row=1, sticky="ew")
 
         # custom controls
-        self.row_custom = self.row_dir + 2
-        ttk.Label(self.frm_main, text='Custom:').grid(column=0, row=self.row_custom, sticky='e')
+        self.row_custom = self.row_dir + 4
+        ttk.Label(self.frm_main, text="Custom:").grid(
+            column=0, row=self.row_custom, sticky="e"
+        )
 
         self.frm_custom = ttk.Frame(self.frm_main)
-        self.frm_custom.grid(column=1, row=self.row_custom, sticky='ew')
+        self.frm_custom.grid(column=1, row=self.row_custom, sticky="ew")
 
         self.frm_lengths = ttk.Frame(self.frm_custom)
-        self.frm_lengths.grid(column=0, row=0, sticky='ew')
+        self.frm_lengths.grid(column=0, row=0, sticky="ew")
         self.frm_strings = ttk.Frame(self.frm_custom)
-        self.frm_strings.grid(column=1, row=0, sticky='ew')
+        self.frm_strings.grid(column=1, row=0, sticky="ew")
 
-        self.check_frame_length = ttk.Checkbutton(self.frm_lengths, text='Frame Number Length:')
+        self.check_frame_length = ttk.Checkbutton(
+            self.frm_lengths, text="Frame Number Length:"
+        )
         init_checkbutton(self.check_frame_length)
-        self.spin_frame_length = ttk.Spinbox(self.frm_lengths, width=6, from_=0, to=999999, textvariable=self.frame_length)
-        self.frame_length.set('1')
-        self.spin_frame_length.bind('<Return>', spin_frame_length_enter)
+        self.spin_frame_length = ttk.Spinbox(
+            self.frm_lengths,
+            width=6,
+            from_=0,
+            to=999999,
+            textvariable=self.frame_length,
+        )
+        self.frame_length.set("1")
+        self.spin_frame_length.bind("<Return>", spin_frame_length_enter)
 
-        self.check_header_length = ttk.Checkbutton(self.frm_lengths, text='Header Length:')
+        self.check_header_length = ttk.Checkbutton(
+            self.frm_lengths, text="Header Length:"
+        )
         init_checkbutton(self.check_header_length, False)
-        self.spin_header_length = ttk.Spinbox(self.frm_lengths, width=3, from_=0, to=999, textvariable=self.header_length)
-        self.header_length.set('0')
-        self.spin_header_length.bind('<Return>', spin_header_length_enter)
+        self.spin_header_length = ttk.Spinbox(
+            self.frm_lengths, width=3, from_=0, to=999, textvariable=self.header_length
+        )
+        self.header_length.set("0")
+        self.spin_header_length.bind("<Return>", spin_header_length_enter)
 
-        self.check_frame_length.grid(column=0, row=0, sticky='ew')
-        self.spin_frame_length.grid(column=1, row=0, sticky='ew')
-        self.check_header_length.grid(column=2, row=0, padx=(10, 0), sticky='ew')
-        self.spin_header_length.grid(column=3, row=0, sticky='ew')
+        self.check_frame_length.grid(column=0, row=0, sticky="ew")
+        self.spin_frame_length.grid(column=1, row=0, sticky="ew")
+        self.check_header_length.grid(column=2, row=0, padx=(10, 0), sticky="ew")
+        self.spin_header_length.grid(column=3, row=0, sticky="ew")
 
         tk.Grid.columnconfigure(self.frm_custom, index=0, weight=1)
         tk.Grid.columnconfigure(self.frm_custom, index=1, weight=1)
 
         # string process checkboxes
-        self.check_name_space_strip = ttk.Checkbutton(self.frm_strings, text='strip spaces')
+        self.check_name_space_strip = ttk.Checkbutton(
+            self.frm_strings, text="strip spaces"
+        )
         self.check_name_space_strip.config(variable=self.name_space_strip)
         init_checkbutton(self.check_name_space_strip, True)
-        self.check_name_double_underscore = ttk.Checkbutton(self.frm_strings, text='double underscore')
+        self.check_name_double_underscore = ttk.Checkbutton(
+            self.frm_strings, text="double underscore"
+        )
         self.check_name_double_underscore.config(variable=self.name_double_underscore)
         init_checkbutton(self.check_name_double_underscore, True)
-        self.check_name_space_replace = ttk.Checkbutton(self.frm_strings, text='replace space')
+        self.check_name_space_replace = ttk.Checkbutton(
+            self.frm_strings, text="replace space"
+        )
         self.check_name_space_replace.config(variable=self.name_space_replace)
         init_checkbutton(self.check_name_space_replace, True)
-        self.check_name_space_strip.grid(column=0, row=0, sticky='ew')
-        self.check_name_double_underscore.grid(column=1, row=0, padx=10, sticky='ew')
-        self.check_name_space_replace.grid(column=2, row=0, sticky='ew')
+        self.check_name_space_strip.grid(column=0, row=0, sticky="ew")
+        self.check_name_double_underscore.grid(column=1, row=0, padx=10, sticky="ew")
+        self.check_name_space_replace.grid(column=2, row=0, sticky="ew")
 
         # alias table buttons
         self.frm_alias_buttons = ttk.Frame(self.frm_custom)
-        self.frm_alias_buttons.grid(column=0, columnspan=2, row=2, sticky='ew')
-        self.btn_replace_alias = ttk.Button(self.frm_alias_buttons, text='Replace Alias', command=self.edit_alias_button_command_adv)
-        self.btn_add_alias = ttk.Button(self.frm_alias_buttons, text='Add Alias', command=self.add_alias_button_command_adv)
-        self.btn_remove_alias = ttk.Button(self.frm_alias_buttons, text='Remove Alias', command=self.remove_alias_button_command_adv)
-        self.btn_clear_custom_edits = ttk.Button(self.frm_alias_buttons, text='Clear Custom Aliases', command=self.clear_custom_aliases_command_adv)
-        self.btn_clear_auto_aliases = ttk.Button(self.frm_alias_buttons, text='Clear Auto Aliases', command=self.clear_auto_aliases_button_command_adv)
-        self.btn_restore_auto_aliases = ttk.Button(self.frm_alias_buttons, text='Restore Auto Aliases', command=self.restore_auto_aliases_button_command_adv)
-        self.btn_replace_alias.grid(column=0, row=0, sticky='ew')
-        self.btn_add_alias.grid(column=1, row=0, sticky='ew')
-        self.btn_remove_alias.grid(column=2, row=0, sticky='ew')
-        self.btn_clear_auto_aliases.grid(column=3, row=0, padx=(10, 0), sticky='ew')
-        self.btn_restore_auto_aliases.grid(column=4, row=0, sticky='ew')
-        self.btn_clear_custom_edits.grid(column=5, row=0, sticky='ew')
+        self.frm_alias_buttons.grid(column=0, columnspan=2, row=2, sticky="ew")
+        self.btn_replace_alias = ttk.Button(
+            self.frm_alias_buttons,
+            text="Replace Alias",
+            command=self.edit_alias_button_command_adv,
+        )
+        self.btn_add_alias = ttk.Button(
+            self.frm_alias_buttons,
+            text="Add Alias",
+            command=self.add_alias_button_command_adv,
+        )
+        self.btn_remove_alias = ttk.Button(
+            self.frm_alias_buttons,
+            text="Remove Alias",
+            command=self.remove_alias_button_command_adv,
+        )
+        self.btn_clear_custom_edits = ttk.Button(
+            self.frm_alias_buttons,
+            text="Clear Custom Aliases",
+            command=self.clear_custom_aliases_command_adv,
+        )
+        self.btn_clear_auto_aliases = ttk.Button(
+            self.frm_alias_buttons,
+            text="Clear Auto Aliases",
+            command=self.clear_auto_aliases_button_command_adv,
+        )
+        self.btn_restore_auto_aliases = ttk.Button(
+            self.frm_alias_buttons,
+            text="Restore Auto Aliases",
+            command=self.restore_auto_aliases_button_command_adv,
+        )
+        self.btn_replace_alias.grid(column=0, row=0, sticky="ew")
+        self.btn_add_alias.grid(column=1, row=0, sticky="ew")
+        self.btn_remove_alias.grid(column=2, row=0, sticky="ew")
+        self.btn_clear_auto_aliases.grid(column=3, row=0, padx=(10, 0), sticky="ew")
+        self.btn_restore_auto_aliases.grid(column=4, row=0, sticky="ew")
+        self.btn_clear_custom_edits.grid(column=5, row=0, sticky="ew")
 
         tk.Grid.columnconfigure(self.frm_alias_buttons, index=0, weight=1)
         tk.Grid.columnconfigure(self.frm_alias_buttons, index=1, weight=1)
@@ -180,9 +270,11 @@ class MainApplication(tk.Frame):
 
         # alias table controls
         self.row_alias = self.row_custom + 1
-        ttk.Label(self.frm_main, text='Alias Table:').grid(column=0, row=self.row_alias, sticky='e')
+        ttk.Label(self.frm_main, text="Alias Table:").grid(
+            column=0, row=self.row_alias, sticky="e"
+        )
         self.frm_alias = ttk.Frame(self.frm_main)
-        self.frm_alias.grid(column=1, row=self.row_alias, pady=10, sticky='nsew')
+        self.frm_alias.grid(column=1, row=self.row_alias, pady=10, sticky="nsew")
 
         tk.Grid.rowconfigure(self.frm_main, index=self.row_alias, weight=1)
         tk.Grid.rowconfigure(self.frm_alias, index=2, weight=1)
@@ -190,22 +282,26 @@ class MainApplication(tk.Frame):
         tk.Grid.columnconfigure(self.frm_alias, index=1, weight=1)
 
         # alias table entry's
-        self.entry_alias = ttk.Entry(self.frm_custom, textvariable=self.alias_string, width=63)
-        self.entry_alias.grid(column=0, row=1, pady=10, sticky='ew')
-        self.edit_redirect = ttk.Entry(self.frm_custom, textvariable=self.redirect_string, width=63)
-        self.edit_redirect.grid(column=1, row=1, sticky='ew')
+        self.entry_alias = ttk.Entry(
+            self.frm_custom, textvariable=self.alias_string, width=63
+        )
+        self.entry_alias.grid(column=0, row=1, pady=10, sticky="ew")
+        self.edit_redirect = ttk.Entry(
+            self.frm_custom, textvariable=self.redirect_string, width=63
+        )
+        self.edit_redirect.grid(column=1, row=1, sticky="ew")
 
         # alias table listbox
         self.lbx_alias = tk.Listbox(self.frm_alias, width=64)
-        self.lbx_alias.grid(column=0, row=2, sticky='nsew')
+        self.lbx_alias.grid(column=0, row=2, sticky="nsew")
         self.lbx_redirect = tk.Listbox(self.frm_alias, width=64)
-        self.lbx_redirect.grid(column=1, row=2, sticky='nsew')
-        self.lbx_alias.bind('<Delete>', listbox_del_adv)
-        self.lbx_redirect.bind('<Delete>', listbox_del_adv)
+        self.lbx_redirect.grid(column=1, row=2, sticky="nsew")
+        self.lbx_alias.bind("<Delete>", listbox_del_adv)
+        self.lbx_redirect.bind("<Delete>", listbox_del_adv)
 
         # alias table listbox scrollbar
         self.scb_lbx_alias = ttk.Scrollbar(self.frm_alias, command=self.yview)
-        self.scb_lbx_alias.grid(column=2, row=2, sticky='ns')
+        self.scb_lbx_alias.grid(column=2, row=2, sticky="ns")
         self.lbx_alias.config(yscrollcommand=self.y_sb_alias)
         self.lbx_redirect.config(yscrollcommand=self.y_sb_redirect)
 
@@ -221,91 +317,123 @@ class MainApplication(tk.Frame):
                 self.set_current_alias_index(self.lbx_redirect.curselection()[0])
                 self.fill_alias_entries(self.get_current_alias_index())
 
-        self.lbx_alias.bind('<<ListboxSelect>>', cur_select_alias)
-        self.lbx_redirect.bind('<<ListboxSelect>>', cur_select_redirect)
+        self.lbx_alias.bind("<<ListboxSelect>>", cur_select_alias)
+        self.lbx_redirect.bind("<<ListboxSelect>>", cur_select_redirect)
 
         # rename header controls
         self.row_rename_header = self.row_alias + 3
         self.frm_rename_header = ttk.Frame(self.frm_main)
-        self.frm_rename_header.grid(column=1, row=self.row_rename_header, sticky='ew')
-        self.check_rename_header = ttk.Checkbutton(self.frm_rename_header, text='Rename Output File Name Header:')
-        self.check_rename_header.grid(column=0, row=0, sticky='w')
+        self.frm_rename_header.grid(column=1, row=self.row_rename_header, sticky="ew")
+        self.check_rename_header = ttk.Checkbutton(
+            self.frm_rename_header, text="Rename Output File Name Header:"
+        )
+        self.check_rename_header.grid(column=0, row=0, sticky="w")
         init_checkbutton(self.check_rename_header, False)
-        self.edit_rename_header = ttk.Entry(self.frm_rename_header, textvariable=self.rename_header)
-        self.edit_rename_header.grid(column=1, row=0, sticky='we')
+        self.edit_rename_header = ttk.Entry(
+            self.frm_rename_header, textvariable=self.rename_header
+        )
+        self.edit_rename_header.grid(column=1, row=0, sticky="we")
         tk.Grid.columnconfigure(self.frm_rename_header, index=1, weight=1)
-        self.edit_rename_header.bind('<Return>', rename_header_enter)
+        self.edit_rename_header.bind("<Return>", rename_header_enter)
 
         # add file names preview
         self.row_preview = self.row_rename_header + 1
-        ttk.Label(self.frm_main, text='Preview:').grid(column=0, row=self.row_preview, sticky='e')
+        ttk.Label(self.frm_main, text="Preview:").grid(
+            column=0, row=self.row_preview, sticky="e"
+        )
         self.frm_preview = ttk.Frame(self.frm_main)
-        self.frm_preview.grid(column=1, row=self.row_preview, pady=10, sticky='nsew')
-        self.lbx_preview_subdir = tk.Listbox(self.frm_preview, width=string_subdir_size, justify=tk.RIGHT)
-        self.lbx_preview = tk.Listbox(self.frm_preview, width=string_preview_size - string_subdir_size)
-        self.lbx_preview_subdir.grid(column=0, row=0, sticky='nsew')
-        self.lbx_preview.grid(column=1, row=0, sticky='nsew')
+        self.frm_preview.grid(column=1, row=self.row_preview, pady=10, sticky="nsew")
+        self.lbx_preview_subdir = tk.Listbox(
+            self.frm_preview, width=string_subdir_size, justify=tk.RIGHT
+        )
+        self.lbx_preview = tk.Listbox(
+            self.frm_preview, width=string_preview_size - string_subdir_size
+        )
+        self.lbx_preview_subdir.grid(column=0, row=0, sticky="nsew")
+        self.lbx_preview.grid(column=1, row=0, sticky="nsew")
 
         tk.Grid.rowconfigure(self.frm_main, index=self.row_preview, weight=10)
         tk.Grid.rowconfigure(self.frm_preview, index=0, weight=1)
         tk.Grid.columnconfigure(self.frm_preview, index=1, weight=1)
 
         # preview scrollbar
-        self.scb_lbx_preview = ttk.Scrollbar(self.frm_preview, command=self.preview_yview)
-        self.scb_lbx_preview.grid(column=2, row=0, sticky='ns')
+        self.scb_lbx_preview = ttk.Scrollbar(
+            self.frm_preview, command=self.preview_yview
+        )
+        self.scb_lbx_preview.grid(column=2, row=0, sticky="ns")
         self.lbx_preview.config(yscrollcommand=self.y_sb_preview)
         self.lbx_preview_subdir.config(yscrollcommand=self.y_sb_preview_subdir)
 
         # move button
         self.row_move = self.row_preview + 1
         self.frm_move = ttk.Frame(self.frm_main)
-        self.frm_move.grid(column=1, row=self.row_move, sticky='ew')
-        self.btn_copy = ttk.Button(self.frm_move, text='Copy Files', command=self.copy_files_cmd)
-        self.btn_copy.grid(column=0, row=0, sticky='ew')
-        self.btn_move = ttk.Button(self.frm_move, text='Move Files', command=self.move_files_cmd)
-        self.btn_move.grid(column=1, row=0, sticky='ew')
+        self.frm_move.grid(column=1, row=self.row_move, sticky="ew")
+        self.btn_copy = ttk.Button(
+            self.frm_move, text="Copy Files", command=self.copy_files_cmd
+        )
+        self.btn_copy.grid(column=0, row=0, sticky="ew")
+        self.btn_move = ttk.Button(
+            self.frm_move, text="Move Files", command=self.move_files_cmd
+        )
+        self.btn_move.grid(column=1, row=0, sticky="ew")
 
         tk.Grid.columnconfigure(self.frm_move, index=0, weight=1)
         tk.Grid.columnconfigure(self.frm_move, index=1, weight=1)
 
         # status controls
         self.row_status = self.row_move + 1
-        ttk.Label(self.frm_main, text='Status:').grid(column=0, row=self.row_status, sticky='e')
-        self.lbl_status = ttk.Label(self.frm_main, text='Ready')
+        ttk.Label(self.frm_main, text="Status:").grid(
+            column=0, row=self.row_status, sticky="e"
+        )
+        self.lbl_status = ttk.Label(self.frm_main, text="Ready")
         self.lbl_status.grid(column=1, row=self.row_status)
 
         # init live action for controls
         self.check_frame_length.config(command=self.check_frame_length_cmd)
         self.check_header_length.config(command=self.check_header_length_cmd)
         self.check_name_space_strip.config(command=self.check_name_space_strip_cmd)
-        self.check_name_double_underscore.config(command=self.check_name_double_underscore_cmd)
+        self.check_name_double_underscore.config(
+            command=self.check_name_double_underscore_cmd
+        )
         self.check_name_space_replace.config(command=self.check_name_space_replace_cmd)
         self.check_rename_header.config(command=self.check_rename_header_cmd)
 
     def check_rename_header_cmd(self):
-        self.scan_command_message('Header rename processing...', 'Header rename processing complete.')
+        self.scan_command_message(
+            "Header rename processing...", "Header rename processing complete."
+        )
 
     def check_name_space_strip_cmd(self):
-        self.scan_command_message('Strip spaces processing...', 'Strip spaces processing complete.')
+        self.scan_command_message(
+            "Strip spaces processing...", "Strip spaces processing complete."
+        )
 
     def check_name_double_underscore_cmd(self):
-        self.scan_command_message('Double underscore processing...', 'Double underscore processing complete.')
+        self.scan_command_message(
+            "Double underscore processing...", "Double underscore processing complete."
+        )
 
     def check_name_space_replace_cmd(self):
-        self.scan_command_message('Replace space processing...', 'Replace space processing complete.')
+        self.scan_command_message(
+            "Replace space processing...", "Replace space processing complete."
+        )
 
     def check_frame_length_cmd(self):
-        self.scan_command_message('Frame number processing...', 'Frame number processing complete.')
+        self.scan_command_message(
+            "Frame number processing...", "Frame number processing complete."
+        )
 
     def check_header_length_cmd(self):
-        self.scan_command_message('Header length processing...', 'Header length processing complete.')
+        self.scan_command_message(
+            "Header length processing...", "Header length processing complete."
+        )
 
     def clear_alias_entries(self):
-        self.alias_string.set('')
-        self.redirect_string.set('')
+        self.alias_string.set("")
+        self.redirect_string.set("")
 
     def fill_alias_entries(self, idx):
-        if idx == '':
+        if idx == "":
             return
         self.alias_string.set(self.lbx_alias.get(idx))
         self.redirect_string.set(self.lbx_redirect.get(idx))
@@ -342,35 +470,48 @@ class MainApplication(tk.Frame):
         self.source_dir.set(get_dir_path(self.source_dir.get()))
         self.scan_button_command_adv()
 
+    def target_browse_button_command_adv(self):
+        self.target_dir.set(
+            get_dir_path(self.source_dir.get(), title="Select Folder to Save")
+        )
+
     def clear_auto_aliases_button_command_adv(self):
         #  clear auto aliases command advanced, DELETE ALL ALIAS AUTO LIST ROWS BY REMOVE ALIAS ADVANCED
         for alias_auto_pair_row in self.alias_auto_list:
             self.remove_alias_adv(alias_auto_pair_row)
-        self.scan_command_message('Clearing auto aliases...', 'Clearing auto aliases complete.')
+        self.scan_command_message(
+            "Clearing auto aliases...", "Clearing auto aliases complete."
+        )
 
     def restore_auto_aliases_button_command_adv(self):
         #  restore auto aliases command advanced
         for alias_auto_pair_row in self.alias_auto_list:
             self.add_alias_adv(alias_auto_pair_row)
-        self.scan_command_message('Restoring auto aliases...', 'Restoring auto aliases complete.')
+        self.scan_command_message(
+            "Restoring auto aliases...", "Restoring auto aliases complete."
+        )
 
     def clear_custom_aliases_command_adv(self):
         #  clear custom aliases command advanced
         self.alias_custom_remove_list.clear()
         self.alias_custom_new_list.clear()
-        self.scan_command_message('Clearing custom aliases...', 'Clearing custom aliases complete.')
+        self.scan_command_message(
+            "Clearing custom aliases...", "Clearing custom aliases complete."
+        )
 
     def add_alias_button_command_adv(self):
         #  add alias button command advanced
         self.add_alias_adv(self.get_new_alias_edits())
-        self.scan_command_message('Adding auto aliases...', 'Adding auto aliases complete.')
+        self.scan_command_message(
+            "Adding auto aliases...", "Adding auto aliases complete."
+        )
 
     def add_alias_adv(self, alias_pair_row):
         if alias_pair_row is None:
             return
         if len(alias_pair_row) == 0:
             return
-        if alias_pair_row[IDX_ALIAS] == '' or alias_pair_row[IDX_REDIRECT] == '':
+        if alias_pair_row[IDX_ALIAS] == "" or alias_pair_row[IDX_REDIRECT] == "":
             return
         if alias_pair_row in self.alias_custom_remove_list:
             self.alias_custom_remove_list.remove(alias_pair_row)
@@ -382,21 +523,21 @@ class MainApplication(tk.Frame):
         # get new alias edits
         alias = self.entry_alias.get()
         redirect = self.redirect_string.get()
-        if alias == '' or redirect == '':
-            return ['', '']
+        if alias == "" or redirect == "":
+            return ["", ""]
         return [alias, redirect]
 
     def remove_alias_button_command_adv(self):
         # remove alias button command advanced
         self.remove_alias_adv(self.get_current_alias_adv())
-        self.scan_command_message('Removing alias...', 'Removing alias complete.')
+        self.scan_command_message("Removing alias...", "Removing alias complete.")
 
     def remove_alias_adv(self, alias_pair_row):
         if alias_pair_row is None:
             return
         if len(alias_pair_row) == 0:
             return
-        if alias_pair_row[IDX_ALIAS] == '' or alias_pair_row[IDX_REDIRECT] == '':
+        if alias_pair_row[IDX_ALIAS] == "" or alias_pair_row[IDX_REDIRECT] == "":
             return
         if alias_pair_row in self.alias_custom_new_list:
             self.alias_custom_new_list.remove(alias_pair_row)
@@ -411,17 +552,20 @@ class MainApplication(tk.Frame):
             return
         if len(new_alias_pair_row) == 0:
             return
-        if new_alias_pair_row[IDX_ALIAS] == '' or new_alias_pair_row[IDX_REDIRECT] == '':
+        if (
+            new_alias_pair_row[IDX_ALIAS] == ""
+            or new_alias_pair_row[IDX_REDIRECT] == ""
+        ):
             return
         # delete current row
         self.remove_alias_adv(self.get_current_alias_adv())
         # add new row
         self.add_alias_adv(new_alias_pair_row)
-        self.scan_command_message('Processing alias...', 'Processing alias complete.')
+        self.scan_command_message("Processing alias...", "Processing alias complete.")
 
     def get_current_alias_adv(self):
         if self.get_current_alias_index() > len(self.alias_working_list) - 1:
-            return ['', '']
+            return ["", ""]
         return self.alias_working_list[self.get_current_alias_index()]
 
     def set_current_alias_index(self, index):
@@ -442,12 +586,15 @@ class MainApplication(tk.Frame):
         return self.current_alias_index
 
     def scan_button_command_adv(self):
-        self.scan_command_message('Scanning...', 'Scanning complete.')
+        self.scan_command_message("Scanning...", "Scanning complete.")
+
+    def copy_source_button_command_adv(self):
+        self.target_dir.set(self.source_dir.get())
 
     def scan_command_message(self, start_message, finish_message):
         # get source dir
         if not os.path.exists(self.source_dir.get()):
-            self.set_status('Enter valid directory path to scan.')
+            self.set_status("Enter valid directory path to scan.")
             return  # return if source dir is not valid
         self.set_status(start_message)
         # get list of filenames in specific directory
@@ -463,7 +610,10 @@ class MainApplication(tk.Frame):
         # scan input file list
         self.disassembly_dict = dict()
         # get disassembly_dict for full input filename list
-        alias_auto_full_list, disassembly_table_auto_full_dict = self.generate_disassembly_dict(input_filename_list)
+        (
+            alias_auto_full_list,
+            disassembly_table_auto_full_dict,
+        ) = self.generate_disassembly_dict(input_filename_list)
         # get alias manual list for file list, filter file list
         processed_manual_filename_list = list()
         not_processed_filename_list = list(input_filename_list)
@@ -478,23 +628,39 @@ class MainApplication(tk.Frame):
                 processed_manual_filename_list.append(filename)
         # copy disassembly dict data from alias auto full list to alias manual filename list entries
         for filename in self.disassembly_dict:
-            self.disassembly_dict[filename][ID_FILE_EXT] = disassembly_table_auto_full_dict[filename][ID_FILE_EXT]
-            self.disassembly_dict[filename][ID_NO_FILE_EXT] = disassembly_table_auto_full_dict[filename][ID_NO_FILE_EXT]
-            self.disassembly_dict[filename][ID_FRAME_NUM] = disassembly_table_auto_full_dict[filename][ID_FRAME_NUM]
-            self.disassembly_dict[filename][ID_NO_FRAME_NUM] = disassembly_table_auto_full_dict[filename][ID_NO_FRAME_NUM]
+            self.disassembly_dict[filename][
+                ID_FILE_EXT
+            ] = disassembly_table_auto_full_dict[filename][ID_FILE_EXT]
+            self.disassembly_dict[filename][
+                ID_NO_FILE_EXT
+            ] = disassembly_table_auto_full_dict[filename][ID_NO_FILE_EXT]
+            self.disassembly_dict[filename][
+                ID_FRAME_NUM
+            ] = disassembly_table_auto_full_dict[filename][ID_FRAME_NUM]
+            self.disassembly_dict[filename][
+                ID_NO_FRAME_NUM
+            ] = disassembly_table_auto_full_dict[filename][ID_NO_FRAME_NUM]
 
         # generate alias auto data for not processed filename list
         processed_filename_list = list()
         # get disassembly_dict for not processed filename list
-        self.alias_auto_list, disassembly_table_auto_dict = self.generate_disassembly_dict(not_processed_filename_list)
+        (
+            self.alias_auto_list,
+            disassembly_table_auto_dict,
+        ) = self.generate_disassembly_dict(not_processed_filename_list)
         for alias_auto_pair_row in self.alias_auto_list:
             auto_filename_list = list(disassembly_table_auto_dict)
             for filename in auto_filename_list:
-                if alias_auto_pair_row[IDX_ALIAS] == disassembly_table_auto_dict[filename][ID_NO_FRAME_NUM]:
+                if (
+                    alias_auto_pair_row[IDX_ALIAS]
+                    == disassembly_table_auto_dict[filename][ID_NO_FRAME_NUM]
+                ):
                     # ignore deleted alias stored in alias custom remove list
                     if alias_auto_pair_row in self.alias_custom_remove_list:
                         continue
-                    disassembly_table_auto_dict[filename][ID_RAW_ALIAS] = alias_auto_pair_row[IDX_ALIAS]
+                    disassembly_table_auto_dict[filename][
+                        ID_RAW_ALIAS
+                    ] = alias_auto_pair_row[IDX_ALIAS]
                     not_processed_filename_list.remove(filename)
                     processed_filename_list.append(filename)
 
@@ -504,42 +670,53 @@ class MainApplication(tk.Frame):
                 self.disassembly_dict[filename] = disassembly_table_auto_dict[filename]
         self.alias_working_list = self.get_alias_working_list_adv()
 
-        self.update_disassembly_dict_adv(processed_manual_filename_list + processed_filename_list)
+        self.update_disassembly_dict_adv(
+            processed_manual_filename_list + processed_filename_list
+        )
 
     def update_disassembly_dict_adv(self, input_filename_list):
         # update disassembly dictionary advanced
         for alias_string_pair in self.alias_working_list:
             redirect_subdir = process_string_spaces(
-                f'{alias_string_pair[IDX_REDIRECT]}',
+                f"{alias_string_pair[IDX_REDIRECT]}",
                 space_strip=self.name_space_strip.get(),
                 double_underscore=self.name_double_underscore.get(),
-                space_replace=self.name_space_replace.get()
+                space_replace=self.name_space_replace.get(),
             )
             filename_list = list(input_filename_list)
             for filename in filename_list:
                 # compare by raw alias
-                if alias_string_pair[IDX_ALIAS] == self.disassembly_dict[filename][ID_RAW_ALIAS]:
+                if (
+                    alias_string_pair[IDX_ALIAS]
+                    == self.disassembly_dict[filename][ID_RAW_ALIAS]
+                ):
                     # redirect_noframe = self.disassembly_dict[filename][ID_NO_FRAME_NUM]
                     redirect_noframe = process_string_spaces(
-                        f'{self.disassembly_dict[filename][ID_NO_FRAME_NUM]}',
+                        f"{self.disassembly_dict[filename][ID_NO_FRAME_NUM]}",
                         space_strip=self.name_space_strip.get(),
                         double_underscore=self.name_double_underscore.get(),
-                        space_replace=self.name_space_replace.get()
+                        space_replace=self.name_space_replace.get(),
                     )
                     # process rename header field
-                    if not self.check_rename_header.instate(['selected']):
-                        redirect_filename = f'{redirect_subdir}/{redirect_noframe}_{self.disassembly_dict[filename][ID_FRAME_NUM]}{self.disassembly_dict[filename][ID_FILE_EXT]}'
+                    if not self.check_rename_header.instate(["selected"]):
+                        redirect_filename = f"{redirect_subdir}/{redirect_noframe}_" + \
+                            f"{self.disassembly_dict[filename][ID_FRAME_NUM]}" + \
+                            f"{self.disassembly_dict[filename][ID_FILE_EXT]}"
                     else:
                         modified_header = self.rename_header.get()
-                        if modified_header is None or modified_header == '':
+                        if modified_header is None or modified_header == "":
                             modified_header = redirect_noframe
                             redirect_modified_noframe = modified_header
                         else:
                             if redirect_subdir != ID_BEAUTY:
-                                redirect_modified_noframe = '{}_{}'.format(modified_header, redirect_subdir)
+                                redirect_modified_noframe = "{}_{}".format(
+                                    modified_header, redirect_subdir
+                                )
                             else:
                                 redirect_modified_noframe = modified_header
-                        redirect_filename = f'{redirect_subdir}/{redirect_modified_noframe}_{self.disassembly_dict[filename][ID_FRAME_NUM]}{self.disassembly_dict[filename][ID_FILE_EXT]}'
+                        redirect_filename = f"{redirect_subdir}/{redirect_modified_noframe}_" + \
+                            f"{self.disassembly_dict[filename][ID_FRAME_NUM]}" + \
+                            f"{self.disassembly_dict[filename][ID_FILE_EXT]}"
                     # add processed filenames to self.disassembly_dict
                     self.disassembly_dict[filename][ID_SUBDIR] = redirect_subdir
                     self.disassembly_dict[filename][ID_REDIRECT] = redirect_filename
@@ -557,8 +734,8 @@ class MainApplication(tk.Frame):
         self.refresh_preview_subdir_table_adv()
 
     def clear_alias_entries_adv(self):
-        self.alias_string.set('')
-        self.redirect_string.set('')
+        self.alias_string.set("")
+        self.redirect_string.set("")
 
     def refresh_alias_table_adv(self):
         self.lbx_alias.delete(0, tk.END)  # clear alias listbox
@@ -572,7 +749,7 @@ class MainApplication(tk.Frame):
                 alias[IDX_REDIRECT],
                 space_strip=self.name_space_strip.get(),
                 double_underscore=self.name_double_underscore.get(),
-                space_replace=self.name_space_replace.get()
+                space_replace=self.name_space_replace.get(),
             )
             self.lbx_redirect.insert(tk.END, redirect_string)
 
@@ -586,7 +763,7 @@ class MainApplication(tk.Frame):
                 preview_string,
                 space_strip=self.name_space_strip.get(),
                 double_underscore=self.name_double_underscore.get(),
-                space_replace=self.name_space_replace.get()
+                space_replace=self.name_space_replace.get(),
             )
             self.lbx_preview.insert(tk.END, preview_string)
 
@@ -600,10 +777,11 @@ class MainApplication(tk.Frame):
                 list(
                     map(
                         lambda x: self.disassembly_dict[x][ID_SUBDIR],
-                        list(self.disassembly_dict)
+                        list(self.disassembly_dict),
                     )
                 ),
-                key=len)
+                key=len,
+            )
         )
         self.lbx_preview_subdir.config(width=maxlength)
         self.lbx_preview.config(width=(string_preview_size - maxlength))
@@ -614,7 +792,7 @@ class MainApplication(tk.Frame):
                 preview_string,
                 space_strip=self.name_space_strip.get(),
                 double_underscore=self.name_double_underscore.get(),
-                space_replace=self.name_space_replace.get()
+                space_replace=self.name_space_replace.get(),
             )
             self.lbx_preview_subdir.insert(tk.END, preview_string)
 
@@ -642,12 +820,14 @@ class MainApplication(tk.Frame):
         disassembly_table_dict = dict()
         working_list = list(file_list)
         stat = dict()
-        if not self.check_header_length.instate(['selected']):
-            working_letter = ''
+        if not self.check_header_length.instate(["selected"]):
+            working_letter = ""
             working_letter_count = 0
             for item in working_list:  # initialize list
                 stat[item[0]] = 0
-            for item in working_list:  # count of appearance for fist letters in filename
+            for (
+                item
+            ) in working_list:  # count of appearance for fist letters in filename
                 stat[item[0]] += 1
             for letter in stat:  # choose pattern with larger appearance count
                 if stat[letter] > working_letter_count:
@@ -666,17 +846,17 @@ class MainApplication(tk.Frame):
                 # initialize stat dictionary
                 for filename in working_list:
                     file_ext = get_file_ext(join(dir_path, filename))[1]
-                    filename_noext = filename[:-len(file_ext)]
+                    filename_noext = filename[: -len(file_ext)]
                     frame_num_detect = self.get_frame_number(filename_noext)
                     filename_noframe = frame_num_detect[1]
-                    stat[filename_noframe[:(compare_idx + 1)]] = 0
+                    stat[filename_noframe[: (compare_idx + 1)]] = 0
                 # count appearance of compare string
                 for filename in working_list:
                     file_ext = get_file_ext(join(dir_path, filename))[1]
-                    filename_noext = filename[:-len(file_ext)]
+                    filename_noext = filename[: -len(file_ext)]
                     frame_num_detect = self.get_frame_number(filename_noext)
                     filename_noframe = frame_num_detect[1]
-                    compare_str = filename_noframe[:(compare_idx + 1)]
+                    compare_str = filename_noframe[: (compare_idx + 1)]
                     stat[compare_str] += 1
                     compare_set.add(compare_str)
                     if compare_idx >= len(filename) - 1:
@@ -687,14 +867,14 @@ class MainApplication(tk.Frame):
 
             # get most used working string
             most_used_working_str_count = 0
-            most_used_working_str = ''
+            most_used_working_str = ""
             for compare_str in compare_set:
                 if stat[compare_str] > most_used_working_str_count:
                     most_used_working_str_count = stat[compare_str]
                     most_used_working_str = compare_str
             for filename in file_list:
                 file_ext = get_file_ext(join(dir_path, filename))[1]
-                filename_noext = filename[:-len(file_ext)]
+                filename_noext = filename[: -len(file_ext)]
                 frame_num_detect = self.get_frame_number(filename_noext)
                 filename_noframe = frame_num_detect[1]
                 # check if working list strings has the same length
@@ -709,7 +889,9 @@ class MainApplication(tk.Frame):
             # detect file extension
             filename_parts[ID_FILE_EXT] = get_file_ext(join(dir_path, filename))[1]
             # cutoff file extension
-            filename_parts[ID_NO_FILE_EXT] = filename[:-len(filename_parts[ID_FILE_EXT])]
+            filename_parts[ID_NO_FILE_EXT] = filename[
+                : -len(filename_parts[ID_FILE_EXT])
+            ]
             # detect frame number
             frame_num_detect = self.get_frame_number(filename_parts[ID_NO_FILE_EXT])
             filename_parts[ID_FRAME_NUM] = frame_num_detect[0]
@@ -733,8 +915,9 @@ class MainApplication(tk.Frame):
         return_alias_list = list()
         for key in key_list:
             alias = key
-            redirect = alias_auto_dict[key].strip(' _')  # strip string to avoid string like '_'
-            if redirect == '':
+            # strip string to avoid string like '_'
+            redirect = alias_auto_dict[key].strip(" _")
+            if redirect == "":
                 redirect = ID_BEAUTY
             return_alias_list.append([alias, redirect])
         return [return_alias_list, disassembly_table_dict]
@@ -752,18 +935,19 @@ class MainApplication(tk.Frame):
     def process_files_command_adv(self, copy_files):
         # move files command advanced
         if copy_files:
-            self.set_status('Copying files...')
+            self.set_status("Copying files...")
         else:
-            self.set_status('Moving files...')
+            self.set_status("Moving files...")
         for filename in self.disassembly_dict:
             # create subdir
             subdir_string = process_string_spaces(
                 self.disassembly_dict[filename][ID_SUBDIR],
                 space_strip=self.name_space_strip.get(),
                 double_underscore=self.name_double_underscore.get(),
-                space_replace=self.name_space_replace.get()
+                space_replace=self.name_space_replace.get(),
             )
-            target_redirect_subdir = os.path.join(self.source_dir.get(), subdir_string)
+            #  get target_redirect_subdir
+            target_redirect_subdir = os.path.join(self.target_dir.get(), subdir_string)
             os.makedirs(name=target_redirect_subdir, exist_ok=True)
             # move file, make new name, create copy of old files
             source_fullpath = os.path.join(self.source_dir.get(), filename)
@@ -771,10 +955,11 @@ class MainApplication(tk.Frame):
                 self.disassembly_dict[filename][ID_REDIRECT],
                 space_strip=self.name_space_strip.get(),
                 double_underscore=self.name_double_underscore.get(),
-                space_replace=self.name_space_replace.get()
+                space_replace=self.name_space_replace.get(),
             )
-            target_fullpath = os.path.join(self.source_dir.get(), redirect_string)
-            # check if file already exist
+            # get target_fullpath
+            target_fullpath = os.path.join(self.target_dir.get(), redirect_string)
+            # copy existing file to tmp dir if file already exist
             if os.path.exists(target_fullpath):
                 target_dirname, target_filename = os.path.split(target_fullpath)
                 old_copy_dirname = get_old_copy_dirname(target_dirname)
@@ -790,9 +975,9 @@ class MainApplication(tk.Frame):
                 # move source file to a new location
                 os.rename(source_fullpath, target_fullpath)
         if copy_files:
-            self.scan_command_message('Copying files...', 'Copying files complete.')
+            self.scan_command_message("Copying files...", "Copying files complete.")
         else:
-            self.scan_command_message('Moving files...', 'Moving files complete.')
+            self.scan_command_message("Moving files...", "Moving files complete.")
 
     def get_alias_auto_dict(self, input_name_list):
         if input_name_list is None:
@@ -827,7 +1012,7 @@ class MainApplication(tk.Frame):
             index += 1
 
         # if checked : get header length from spinner
-        if self.check_header_length.instate(['selected']):
+        if self.check_header_length.instate(["selected"]):
             index = int(self.header_length.get())
 
         for filename_no_frame_string in working_set:
@@ -854,7 +1039,7 @@ class MainApplication(tk.Frame):
             idx -= 1
 
         # if check_frame_number: use frame_number_length
-        if self.check_frame_length.instate(['selected']):
+        if self.check_frame_length.instate(["selected"]):
             num_start = max(num_start, num_finish - int(self.frame_length.get()))
 
         if idx < 0:
@@ -862,8 +1047,10 @@ class MainApplication(tk.Frame):
 
         str_part1 = input_string[:num_start]
         frame_num = input_string[num_start:num_finish]
-        if self.check_frame_length.instate(['selected']):
-            frame_num = frame_num.zfill(int(self.frame_length.get()))  # fill number with leading zeros
+        if self.check_frame_length.instate(["selected"]):
+            frame_num = frame_num.zfill(
+                int(self.frame_length.get())
+            )  # fill number with leading zeros
         str_part2 = input_string[num_finish:]
         str_noframe = str_part1 + str_part2
 
@@ -874,22 +1061,22 @@ def get_file_ext(full_filename):
     return os.path.splitext(full_filename)
 
 
-def get_dir_path(source_dir):
-    result = filedialog.askdirectory(initialdir=source_dir, title='Select Folder with Rendered Images')
-    if result != '':
+def get_dir_path(source_dir, title="Select Folder with Rendered Images"):
+    result = filedialog.askdirectory(initialdir=source_dir, title=title)
+    if result != "":
         return result
     return source_dir
 
 
 def get_start_dir():
-    path_debug = r'F:\work\scenes\kostya_shemelin\20220318_Post_fix\Renders\Frames\PartPartch_OP10Cam10_1 - Copy'
+    path_debug = r"F:\work\scenes\kostya_shemelin\20220318_Post_fix\Renders\Frames\PartPartch_OP10Cam10_1 - Copy"
     if os.path.exists(path_debug):
         return path_debug
     return os.path.dirname(os.path.realpath(__file__))
 
 
 def init_checkbutton(checkbutton, value=False):
-    if checkbutton.instate(['selected']) != value:
+    if checkbutton.instate(["selected"]) != value:
         checkbutton.invoke()
     else:
         # on|off to reinitialize
@@ -897,24 +1084,26 @@ def init_checkbutton(checkbutton, value=False):
         checkbutton.invoke()
 
 
-def process_string_spaces(input_string, space_strip=False, double_underscore=False, space_replace=False):
-    if input_string == '':
-        return ''
+def process_string_spaces(
+    input_string, space_strip=False, double_underscore=False, space_replace=False
+):
+    if input_string == "":
+        return ""
     modified_string = input_string
     if space_strip:
-        modified_string = modified_string.strip(' _')
+        modified_string = modified_string.strip(" _")
     if double_underscore:
-        modified_string = modified_string.replace('__', '_')
+        modified_string = modified_string.replace("__", "_")
     if space_replace:
-        modified_string = modified_string.replace(' ', '_')
+        modified_string = modified_string.replace(" ", "_")
 
     return modified_string
 
 
 def get_old_copy_dirname(target_dirname):
     now = datetime.datetime.now()
-    time_suffix = now.strftime('%Y%m%d_%H%M%S')
-    subdir_name = f'_{OLD_COPY_DIR}_{time_suffix}'
+    time_suffix = now.strftime("%Y%m%d_%H%M%S")
+    subdir_name = f"_{OLD_COPY_DIR}_{time_suffix}"
     old_copy_dirname = os.path.join(target_dirname, subdir_name)
     return old_copy_dirname
 
@@ -925,5 +1114,5 @@ def main():
     root.mainloop()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
